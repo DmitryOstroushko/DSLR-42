@@ -33,3 +33,12 @@ def preprocessing(dataset):
 	# data = data[data[:, 1].argsort()]
 	return sorted(houses), features, data
 
+def get_data_house(data, houses):
+	"""
+	To split data between houses
+	"""
+	data_house = []
+	for idx_house in range(len(houses)):
+		data_house.append(data[data[:,0] == houses[idx_house]])
+	return data_house
+

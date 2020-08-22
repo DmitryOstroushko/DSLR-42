@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import numpy as np
 
 from stream_funcs import *
 from utils import load_csv

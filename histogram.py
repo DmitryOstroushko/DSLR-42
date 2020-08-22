@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-
+import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import argparse
 
@@ -37,16 +38,6 @@ def plot_histogram(X, legend, title, xlabel, ylabel):
 	plt.ylabel(ylabel)
 	plt.show()
 
-def get_data_house(data, houses):
-	"""
-	To split data between houses
-	"""
-	data_house = []
-	for idx_house in range(len(houses)):
-		data_house.append(data[data[:,0] == houses[idx_house]])
-
-	return data_house
-
 def calc_and_plot(houses, features, data_house, idx):
 	"""
 	To calc and plot histogram for one course
@@ -65,6 +56,7 @@ def do_main_function():
 	dataset = load_csv(args.filename)
 	houses, features, data = preprocessing(dataset)
 	data_house = get_data_house(data, houses)
+
 	mark_range = []
 
 	min_mark_range = np.inf
