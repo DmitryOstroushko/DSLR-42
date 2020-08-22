@@ -41,6 +41,18 @@ def max_(X):
 			min_value = val
 	return min_value
 
+def percentile_25_(X):
+	return percentile_(X, 25)
+
+def percentile_25_(X):
+	return percentile_(X, 25)
+
+def percentile_50_(X):
+	return percentile_(X, 50)
+
+def percentile_75_(X):
+	return percentile_(X, 75)
+
 def percentile_(X, p):
 	X.sort()
 	k = (len(X) - 1) * (p / 100)
