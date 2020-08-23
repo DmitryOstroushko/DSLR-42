@@ -42,3 +42,14 @@ def get_data_house(data, houses):
 		data_house.append(data[data[:,0] == houses[idx_house]])
 	return data_house
 
+def get_data_house_one_pair(data_house, houses, idx_1, idx_2):
+	"""
+	To get data for one pair features
+	"""
+	x = []
+	y = []
+	for idx_house in range(len(houses)):
+		d = data_house[idx_house]
+		x.append(np.array(d[:, idx_1], dtype=float))
+		y.append(np.array(d[:, idx_2], dtype=float))
+	return x, y

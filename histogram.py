@@ -30,6 +30,7 @@ def plot_histogram(X, legend, title, xlabel, ylabel):
 	To plot histogram for single course
 	"""
 	colors = ['green', 'yellow', 'red', 'blue']
+	#colors = [plt.cm.tab10(i/float(len(legend)-1)) for i in range(len(legend))]
 	for idx in range(len(X)):
 		plt.hist(X[idx][~np.isnan(X[idx])], color=colors[idx], alpha=0.5)
 	plt.legend(legend, loc='upper right', frameon=False)
