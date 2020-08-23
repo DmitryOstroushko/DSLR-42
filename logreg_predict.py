@@ -54,7 +54,11 @@ def do_main_function():
 		normal_message("See -h option")
 		sys.exit(-1)
 	dataset = pd.read_csv(args.dataset, index_col = "Index")
-	thetas = np.load(args.thetas_file)
+	try:
+		thetas = np.load(args.thetas_file)
+	except:
+		error_message(str(sys.exc_info()[1].args[1]))
+		sys.exit(-1)
 	lrc = MyLogisticRegressionClass()
 	predicts = lrc.predict(dataset, thetas)
 	houses = pd.DataFrame(OrderedDict({'Index':range(len(predicts)), 'Hogwarts House':predicts}))

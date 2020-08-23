@@ -83,7 +83,7 @@ def save_thetas(thetas, file_name):
 	try:
 		np.save(file_name, thetas)
 	except:
-		error_message(sys.exc_info[1])
+		error_message(str(sys.exc_info()[1].args[1]))
 		error_message('It is impossible to save theta values')
 
 def do_main_function():
