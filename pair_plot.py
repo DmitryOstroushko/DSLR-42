@@ -2,7 +2,6 @@
 
 import argparse
 import numpy as np
-import pandas as pd
 
 import matplotlib.pyplot as plt
 
@@ -38,7 +37,7 @@ def pair_plot_hist(ax, X):
 
 def pair_plot(houses, features, data_house):
 
-	font = {'family' : 'DejaVu Sans',
+	font = {'family' : 'Helvetica',
 			'weight' : 'light',
 			'size'   : 7}
 	plt.rc('font', **font)
