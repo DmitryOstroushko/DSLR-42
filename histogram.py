@@ -22,7 +22,6 @@ def options_parse():
 						dest="print_all",
 						default=False,
 						help='If set, drawing histograms for all courses')
-
 	return parser.parse_args()
 
 def plot_histogram(X, legend, title, xlabel, ylabel):
