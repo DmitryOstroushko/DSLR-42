@@ -38,7 +38,7 @@
 
 5. SCATTER_PLOT function bonuses:
     - printing graphs for all courses
-    - надо разобраться, как определить похожие фичи
+    - auto defining similar features
 
 6. PAIR_PLOT:
 
@@ -46,6 +46,4 @@
     - changing parameters of the model
     - calculating of accuracy score
 
-10. To do:
-    - debug in pycharm
-    - utils.py: to check preprocessing and next functions for typing
+8. LOGREG_PREDICT
