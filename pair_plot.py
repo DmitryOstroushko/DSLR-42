@@ -1,97 +1,84 @@
 #!/usr/bin/env python3
+"""
+.py script, which displays a pair plot matrix
+"""
 
-import argparse
-import numpy as np
+from typing import List
+import numpy as np  # type: ignore
+import matplotlib.pyplot as plt  # type: ignore
+from csv_utils import load_csv
+from data_utils import preprocessing, get_house_data, get_one_pair_house_data
+from arg_utils import options_parse_f
 
-import matplotlib.pyplot as plt
 
-from stream_funcs import *
-from utils import *
-from fmath import *
+def pair_plot_scatter(axes, data_x: List[np.array], data_y: List[np.array]) -> None:
+    """
+    To plot scatter for one pair of courses
+    """
+    colors = ['red', 'yellow', 'blue', 'green']
+    for idx, _ in enumerate(data_x):
+        axes.scatter(data_x[idx], data_y[idx], s=1, color=colors[idx], alpha=0.5)
 
-def options_parse():
-	"""
-	Function to define arguments list for command line
-	"""
-	parser = argparse.ArgumentParser()
-	parser.add_argument("filename",
-						type=str,
-						help="A name for input dataset")
-	return parser.parse_args()
 
-def pair_plot_scatter(ax, x, y):
-	"""
-	To plot scatter for one pair of courses
-	"""
-	colors = ['red', 'yellow', 'blue', 'green']
-	for idx in range(len(x)):
-		ax.scatter(x[idx], y[idx], s=1, color=colors[idx], alpha=0.5)
+def pair_plot_hist(axes, data: List[np.array]) -> None:
+    """
+    To plot histogram for single course
+    """
+    colors = ['red', 'yellow', 'blue', 'green']
+    for idx, data_line in enumerate(data):
+        axes.hist(data_line[~np.isnan(data_line)], color=colors[idx], alpha=0.5)
 
-def pair_plot_hist(ax, X):
-	"""
-	To plot histogram for single course
-	"""
-	colors = ['red', 'yellow', 'blue', 'green']
-	for idx in range(len(X)):
-		ax.hist(X[idx][~np.isnan(X[idx])], color=colors[idx], alpha=0.5)
 
-def pair_plot(houses, features, data_house):
+def pair_plot(houses: List[str], features: np.array, data_house: List[np.array]) -> None:
+    """
+    To plot pair matrix
+    """
+    font = {'family': 'DejaVu Sans',
+            'weight': 'light',
+            'size': 7}
+    plt.rc('font', **font)
 
-	font = {'family' : 'Helvetica',
-			'weight' : 'light',
-			'size'   : 7}
-	plt.rc('font', **font)
+    size = len(features) - 1
+    _, axes = plt.subplots(nrows=size, ncols=size)
+    plt.subplots_adjust(wspace=0.15, hspace=0.15)
+    plt.gcf().canvas.set_window_title('Pair Plot')
+    for row in range(size):
+        for col in range(size):
+            data_x, data_y = get_one_pair_house_data(data_house, houses, row + 1, col + 1)
 
-	size = len(features) - 1
-	_, ax = plt.subplots(nrows=size, ncols=size)
-	plt.subplots_adjust(wspace=0.15, hspace=0.15)
-	plt.gcf().canvas.set_window_title('Pair Plot')
-	for row in range(size):
-		for col in range(size):
-			x, y = get_data_house_one_pair(data_house, houses, row + 1, col + 1)
+            if col == row:
+                pair_plot_hist(axes[row, col], data_x)
+            else:
+                pair_plot_scatter(axes[row, col], data_x, data_y)
 
-			if col == row:
-				pair_plot_hist(ax[row, col], x)
-			else:
-				pair_plot_scatter(ax[row, col], x, y)
+            if axes[row, col].is_last_row():
+                axes[row, col].set_xlabel(features[col + 1].replace(' ', '\n'))
+            else:
+                axes[row, col].tick_params(labelbottom=False)
 
-			if ax[row, col].is_last_row():
-				ax[row, col].set_xlabel(features[col + 1].replace(' ', '\n'))
-			else:
-				ax[row, col].tick_params(labelbottom=False)
+            if axes[row, col].is_first_col():
+                axes[row, col].set_ylabel(features[row + 1].replace(' ', '\n'))
+            else:
+                axes[row, col].tick_params(labelleft=False)
 
-			if ax[row, col].is_first_col():
-				ax[row, col].set_ylabel(features[row + 1].replace(' ', '\n'))
-			else:
-				ax[row, col].tick_params(labelleft=False)
+            axes[row, col].spines['right'].set_visible(False)
+            axes[row, col].spines['top'].set_visible(False)
 
-			ax[row, col].spines['right'].set_visible(False)
-			ax[row, col].spines['top'].set_visible(False)
+    plt.legend(houses, loc='upper left', frameon=False, bbox_to_anchor=(1, 0.5))
+    plt.show()
 
-	plt.legend(houses, loc='center left', frameon=False, bbox_to_anchor=(1, 0.5))
-	plt.show()
 
-def do_main_function():
-	"""
-	Main function of PAIR_PLOT command in DSLR project
-	"""
-	args = options_parse()
-	dataset = load_csv(args.filename)
-	houses, features, data = preprocessing(dataset)
-	data_house = get_data_house(data, houses)
+def do_main_function() -> None:
+    """
+    Main function of PAIR_PLOT command in DSLR project
+    """
+    args = options_parse_f()
+    dataset = load_csv(args.filename)
+    houses, features, data = preprocessing(dataset)
+    data_house = get_house_data(data, houses)
 
-	pair_plot(houses, features, data_house)
-
-	"""
-	v0
-	data = dataset[1:, 6:]
-	data = data[data[:, 1].argsort()]
-	features = dataset[0, 6:]
-	legend = ['Grynffindor', 'Hufflepuff', 'Ravenclaw', 'Slytherin']
-	pair_plot(np.array(data, dtype=float), features, legend)
-	plt.show()
-	"""
+    pair_plot(houses, features, data_house)
 
 
 if __name__ == '__main__':
-	do_main_function()
+    do_main_function()
