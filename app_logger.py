@@ -1,5 +1,5 @@
 """
-Functions to log of application processing
+The module contains functions to create and handle of logger object for the program
 """
 
 import argparse
@@ -8,7 +8,15 @@ import logging
 
 def get_file_handler(args: argparse.Namespace) -> logging.FileHandler:
     """
-    To get FileHandler for logger
+    The function returns FileHandler for logger.
+    A file name is defined in log_file_name parameter.
+    Level of logging defines is DEBUG.
+
+    Args:
+        args: a list of the program parameters as argparse.Namespace object
+
+    Returns:
+        FileHandler object for a logger
     """
     file_handler = logging.FileHandler(args.log_file_name)
     file_handler.setLevel(logging.DEBUG)
@@ -17,7 +25,11 @@ def get_file_handler(args: argparse.Namespace) -> logging.FileHandler:
 
 def get_stream_handler() -> logging.StreamHandler:
     """
-    To get StreamHandler for logger
+    The function returns StreamHandler for logger.
+    Level of logging defines is INFO.
+
+    Returns:
+        StreamHandler object for a logger
     """
     stream_handler = logging.StreamHandler()
     stream_handler.setLevel(logging.INFO)
@@ -26,7 +38,16 @@ def get_stream_handler() -> logging.StreamHandler:
 
 def get_logger(name: str, args: argparse.Namespace) -> logging.Logger:
     """
-    To get Logger object
+    The function returns a logger object with FileHandler object.
+    A file name is defined in log_file_name parameter.
+    Level of logging defines is DEBUG.
+
+    Args:
+        name: a name of a program to print in a log line
+        args: a list of the program parameters as argparse.Namespace object
+
+    Returns:
+        FileHandler object for a logger
     """
     logging.basicConfig(
         level=logging.DEBUG,

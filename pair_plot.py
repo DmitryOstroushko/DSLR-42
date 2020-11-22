@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
 """
-.py script, which displays a pair plot matrix
+The module contains functions for PAIR_PLOT script:
+- to display pair graphs for all pair of courses
+On the basis of the pair plot graph (histograms and scatter plots) user should
+define the best features to train model and to predict in the next scripts.
+These features have to be typed in a file.
+This file should be used as the argument for LOGREG_TRAIN and LOGREG_PREDICT scripts.
+
+  Typical usage example:
+
+  pair_plot_scatter(axes, data_x, data_y)
+  pair_plot_hist(axes, data)
+  pair_plot(houses, features, data_house)
 """
 
 from typing import List
@@ -13,7 +24,12 @@ from arg_utils import options_parse_f
 
 def pair_plot_scatter(axes, data_x: List[np.array], data_y: List[np.array]) -> None:
     """
-    To plot scatter for one pair of courses
+    The function plots a scatter graph for one pair of courses
+
+    Args:
+        axes: an axes object for matplotlib
+        data_x: a data for x axis
+        data_y: a data for y axis
     """
     colors = ['red', 'yellow', 'blue', 'green']
     for idx, _ in enumerate(data_x):
@@ -22,7 +38,11 @@ def pair_plot_scatter(axes, data_x: List[np.array], data_y: List[np.array]) -> N
 
 def pair_plot_hist(axes, data: List[np.array]) -> None:
     """
-    To plot histogram for single course
+    The function plots histogram graph for a single course
+
+    Args:
+        axes: an axes object for matplotlib
+        data: a data set
     """
     colors = ['red', 'yellow', 'blue', 'green']
     for idx, data_line in enumerate(data):
@@ -31,7 +51,12 @@ def pair_plot_hist(axes, data: List[np.array]) -> None:
 
 def pair_plot(houses: List[str], features: np.array, data_house: List[np.array]) -> None:
     """
-    To plot pair matrix
+    The function plots pair matrix for all courses
+
+    Args:
+        houses: a list of names of houses
+        features: a features data
+        data_house: a data set divided by houses
     """
     font = {'family': 'DejaVu Sans',
             'weight': 'light',
@@ -73,7 +98,7 @@ def do_main_function() -> None:
     Main function of PAIR_PLOT command in DSLR project
     """
     args = options_parse_f()
-    dataset = load_csv(args.filename)
+    dataset = load_csv(args)
     houses, features, data = preprocessing(dataset)
     data_house = get_house_data(data, houses)
 

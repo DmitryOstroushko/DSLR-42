@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 """
-Histogram function: script displays a histogram
+The module contains functions for HISTOGRAM script:
+- to display graphs for numerical features of dataset
+- to score and define the course with the most homogeneous score
+
+  Typical usage example:
+
+  plot_histogram(data, legend, title, x_label, y_label)
+  calc_and_plot(houses, features, house_data, idx)
 """
 
 from typing import List
@@ -14,7 +21,14 @@ from arg_utils import options_parse_fa
 def plot_histogram(data: List[np.array], legend: List[str], title: str,
                    x_label: str, y_label: str) -> None:
     """
-    the function plots histogram for one course
+    The function plots histogram for one course
+
+    Args:
+        data: a list of rows with data, each row is numpy array
+        legend: a list of names of houses which are legends for graphs
+        title: a title for the graph
+        x_label: a label for the x axis
+        y_label: a label for the y axis
     """
     colors = ['green', 'yellow', 'red', 'blue']
     for idx, data_line in enumerate(data):
@@ -31,6 +45,12 @@ def calc_and_plot(houses: List[str], features: List[str], house_data: List[np.ar
     """
     The function creates array of values for one course.
     After that it invokes the function to plot histogram for one course.
+
+    Args:
+        houses: a list of names of houses
+        features: a list of names of features of dataset
+        house_data: a data divided on parts according the houses
+        idx: index of feature/course
     """
     data_col = []
     for idx_house, _ in enumerate(houses):
@@ -41,12 +61,12 @@ def calc_and_plot(houses: List[str], features: List[str], house_data: List[np.ar
 
 def do_main_function() -> None:
     """
-    Main function of HISTOGRAM command in DSLR project
-    The function calculates score distribution for each course and
-    defines the course with the most homogeneous score
+    Main function of HISTOGRAM script in logistic regression project.
+    The function calculates score distribution for an each course and
+    defines the course with the most homogeneous score.
     """
     args = options_parse_fa()
-    dataset = load_csv(args.filename)
+    dataset = load_csv(args)
     houses, features, data = preprocessing(dataset)
     house_data = get_house_data(data, houses)
 

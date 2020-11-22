@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 """
-Scatter plot function
+The module contains functions for SCATTER_PLOT script:
+- to display scatter graphs for any pair of courses
+- to score and define a pair of the similar courses
+
+  Typical usage example:
+
+  plot_scatter(x_data, y_data, legend, title, xy_labels)
+  calc_and_plot(houses, features, data_house, idx, idx_vs)
+  dataset = drop_nan(dataset, q_features)
+  index_pair = get_similar_pairs(data, features)
 """
 
 import sys
@@ -18,8 +27,16 @@ def plot_scatter(x_data: List[np.array], y_data: List[np.array], legend: List[st
                  title: str, xy_labels: List[str]) -> None:
     """
     The function plots scatter for one pair of courses
+
+    Args:
+        x_data: a data for printing along x axis
+        y_data: a data for printing along y axis
+        legend: a list of names of the graph legend
+        title: a text for the graph title
+        xy_labels: an array of labels for x and y axises
     """
-    colors = [plt.cm.tab10(i/float(len(legend)-1)) for i in range(len(legend))]
+    colors = [plt.cm.get_cmap('gnuplot', 10)(i/float(len(legend)-1))
+              for i in range(len(legend))]
     for idx, _ in enumerate(x_data):
         plt.scatter(x_data[idx], y_data[idx], color=colors[idx], alpha=0.5)
     plt.legend(legend, loc='upper right', frameon=False)
@@ -33,6 +50,13 @@ def calc_and_plot(houses: List[str], features: np.array, data_house: List[np.arr
                   idx: int, idx_vs: int) -> None:
     """
     The function calculates and plots scatter plot for one pair of courses
+
+    Args:
+        houses: a list of names of houses
+        features: a data as an array of values of features
+        data_house: a data divided by houses
+        idx: index of feature one
+        idx_vs: index of feature one
     """
     data_x: List[np.array] = []
     data_y: List[np.array] = []
@@ -49,6 +73,10 @@ def calc_and_plot(houses: List[str], features: np.array, data_house: List[np.arr
 def drop_nan(dataset: List[np.array], q_features: int) -> List[np.array]:
     """
     The function drops rows with nan values and returns new data set
+
+    Args:
+        dataset: a data set
+        q_features: quantity of features in the data set
     """
     result: List[np.array] = []
     for data in dataset:
@@ -62,6 +90,10 @@ def drop_nan(dataset: List[np.array], q_features: int) -> List[np.array]:
 def get_similar_pairs(data: np.array, features: np.array) -> List[int]:
     """
     To define similar pair of features
+
+    Args:
+        data: a data set
+        features: a data as an array of values of features
     """
     similar_features: List[int] = []
     min_similarity = 0.
@@ -84,10 +116,10 @@ def get_similar_pairs(data: np.array, features: np.array) -> List[int]:
 
 def do_main_function():
     """
-    Main function of SCATTER_PLOT command in logistic regression project
+    Main function of SCATTER_PLOT script in logistic regression project
     """
     args = options_parse_fa()
-    dataset = load_csv(args.filename)
+    dataset = load_csv(args)
     houses, features, data = preprocessing(dataset)
     house_data = get_house_data(data, houses)
 

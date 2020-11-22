@@ -1,37 +1,27 @@
 #!/usr/bin/env python3
 """
-Scrip which predicts the Class for data set
+The module contains functions for LOGREG_PREDICT script: it makes predictions for the data set
+
+  Typical usage example:
+
+  args = options_parse()
 """
 
 import sys
-import argparse
 import numpy as np  # type: ignore
 from logreg import MyLogisticRegressionClass
 from csv_utils import load_csv, save_houses
 from data_utils import preprocessing
 from stream_funcs import error_message, success_message
-
-
-def options_parse() -> argparse.Namespace:
-    """
-    Function to define arguments list for command line
-    """
-    parser = argparse.ArgumentParser()
-    parser.add_argument("dataset",
-                        type=str,
-                        help="A name for input dataset")
-    parser.add_argument("thetas_file",
-                        type=str,
-                        help="A name for coefficients of Logistic Regression")
-    return parser.parse_args()
+from arg_utils import options_parse_model
 
 
 def do_main_function():
     """
     The main function of the script
     """
-    args = options_parse()
-    dataset = load_csv(args.dataset)
+    args = options_parse_model(True)
+    dataset = load_csv(args, True)
     _, features, data = preprocessing(dataset)
 
     try:
@@ -42,10 +32,14 @@ def do_main_function():
         sys.exit(-1)
 
     lrc = MyLogisticRegressionClass(thetas=thetas)
-    data_x, _ = lrc.processing(data, features)
-    predicts = lrc.predict(data_x)
-    save_houses(predicts)
-    success_message("Predictions saved to houses.csv")
+    data_x, _ = lrc.processing(data, features, False)
+    try:
+        predicts = lrc.predict(data_x)
+        save_houses(predicts)
+        success_message("Predictions saved to houses.csv")
+    except ValueError:
+        error_message('Dimensions of the data set, the thetas array are different')
+        error_message('It is impossible to predict values for the data set')
 
 
 if __name__ == '__main__':

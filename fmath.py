@@ -1,12 +1,31 @@
 """
-Functions for calculating on array items
+The module contains functions for calculating of the characteristics of arrays
+
+  Typical usage examples:
+
+  q_of_items = count_(array)
+  mean_data = mean_(array)
+  std_data = mean_(array)
+  min_value = min_(array)
+  max_value = max_(array)
+  percentile25_value = percentile_25(array)
+  percentile50_value = percentile_50(array)
+  percentile75_value = percentile_75(array)
+  percentile_value = percentile_(array, percentage)
 """
+
 import numpy as np  # type: ignore
 
 
 def count_(data: np.array) -> int:
     """
-    To count quantity of items in array
+    The function counts quantity of not nan items in the array.
+
+    Args:
+        data: array
+
+    Returns:
+        Quantity of items in the array as an integer number
     """
     try:
         data = data[~np.isnan(data)]
@@ -18,7 +37,13 @@ def count_(data: np.array) -> int:
 
 def mean_(data: np.array) -> np.float64:
     """
-    To count mean value of items in array
+    The function counts mean value of not nan items in the array of numbers.
+
+    Args:
+        data: array
+
+    Returns:
+        Mean value of items in the array as a float number
     """
     total = 0.0
     for item in data:
@@ -30,7 +55,13 @@ def mean_(data: np.array) -> np.float64:
 
 def std_(data: np.array) -> np.float64:
     """
-    To count standard deviation value of items in array
+    The function counts standard deviation of not nan items in the array of numbers.
+
+    Args:
+        data: array
+
+    Returns:
+        Standard deviation of items in the array as a float number
     """
     mean = mean_(data)
     total = 0.0
@@ -43,7 +74,13 @@ def std_(data: np.array) -> np.float64:
 
 def min_(data: np.array) -> np.float64:
     """
-    To define min item in array
+    The function defines min value of not nan items in the array of numbers.
+
+    Args:
+        data: array
+
+    Returns:
+        Min value of items in the array as a float number
     """
     min_value = data[0]
     for item in data:
@@ -55,7 +92,13 @@ def min_(data: np.array) -> np.float64:
 
 def max_(data: np.array) -> np.float64:
     """
-    To define max item in array
+    The function defines max value of not nan items in the array of numbers.
+
+    Args:
+        data: array
+
+    Returns:
+        Max value of items in the array as a float number
     """
     min_value = data[0]
     for item in data:
@@ -67,57 +110,54 @@ def max_(data: np.array) -> np.float64:
 
 def percentile_25_(data: np.array) -> np.float64:
     """
-    To calculate percentile 25%
+    The function calculates percentile 25% of not nan items in the array of numbers.
+
+    Args:
+        data: array
+
+    Returns:
+        Value of percentile 25% of items in the array as a float number
     """
     return percentile_(data, 25)
 
 
 def percentile_50_(data: np.array) -> np.float64:
     """
-    To calculate percentile 50%
+    The function calculates percentile 50% of not nan items in the array of numbers.
+
+    Args:
+        data: array
+
+    Returns:
+        Value of percentile 50% of items in the array as a float number
     """
     return percentile_(data, 50.0)
 
 
 def percentile_75_(data: np.array) -> np.float64:
     """
-    To calculate percentile 75%
+    The function calculates percentile 75% of not nan items in the array of numbers.
+
+    Args:
+        data: array
+
+    Returns:
+        Value of percentile 75% of items in the array as a float number
     """
     return percentile_(data, 75.0)
 
 
 def percentile_(data: np.array, percentage: np.float64) -> np.float64:
     """
-    To calculate percentile
+    The function calculates percentile of not nan items in the array of numbers.
+
+    Args:
+        data: array
+        percentage: float value
+
+    Returns:
+        Value of defined percentile of items in the array as a float number
     """
     data.sort()
     split_point = int(round(len(data) * percentage / 100 + 0.5))
     return data[split_point - 1]
-
-
-def percentile_var1_(data: np.array, percentage: np.float64) -> np.float64:
-    """
-    To calculate percentile
-    """
-    data.sort()
-    split_point = len(data) * percentage / 100
-    split_point_ceil = np.ceil(split_point)
-    return data[int(split_point_ceil) - 1]
-
-
-def percentile_var2_(data: np.array, percentage: np.float64) -> np.float64:
-    """
-    To calculate percentile: variant 2
-    """
-    data.sort()
-    split_point = (len(data) - 1) * (percentage / 100)
-    split_point_floor = np.floor(split_point)
-    split_point_ceil = np.ceil(split_point)
-
-    if split_point_floor == split_point_ceil:
-        return data[int(split_point)]
-
-    term_0 = data[int(split_point_floor)] * (split_point_ceil - split_point)
-    term_1 = data[int(split_point_ceil)] * (split_point - split_point_floor)
-
-    return term_0 + term_1

@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 """
-Describe function: script displays information for all numerical features of dataset
+The module contains functions for DESCRIBE script: to display an information
+about numerical features of dataset
+
+  Typical usage example:
+
+  args = options_parse()
+  dict_num_features = set_numerical_features(features, dataset, logger)
+  describe_vertical(args, logger)
+  describe_horizontal(args, logger)
 """
 
 import argparse
@@ -10,7 +18,7 @@ from logging import Logger
 import numpy as np  # type: ignore
 from stream_funcs import error_message
 from csv_utils import load_csv
-from fmath import count_, mean_, std_, min_, max_, percentile_, percentile_25_, percentile_50_, \
+from fmath import count_, mean_, std_, min_, max_, percentile_25_, percentile_50_, \
     percentile_75_
 from app_logger import get_logger
 
@@ -27,10 +35,22 @@ FUNCTION_LIST = {'Count': count_,
 
 def options_parse() -> argparse.Namespace:
     """
-    The function reads arguments from command line and defines list of options
+    The function extracts arguments of command line and
+    returns them as parameters of the program.
+    A validation is performing in argparse library module.
+    The function processes 4 parameters:
+        - 'filename_dataset': name of file with data
+        - printing mode
+        - whether to get 'index' filed as a feature
+        - a log file name: to specify file name for logger, default = 'log.txt'
+
+    Returns:
+        Parameters list as argparse.Namespace object
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument("filename", type=str, help="A name for input dataset")
+    parser.add_argument("filename_dataset",
+                        type=str,
+                        help="A name for input dataset")
     parser.add_argument("--print_mode",
                         "-p",
                         action="store",
@@ -53,10 +73,17 @@ def options_parse() -> argparse.Namespace:
 
 def set_numerical_features(features: List[str], dataset: np.array, logger: Logger = None) -> dict:
     """
-    The function gets list of name of features, analyses data for each feature
+    The function gets a list of name of features, analyses data for each feature
     and marks each feature as numeric or not.
-    Result of the function is dictionary:
-    key are name of feature, value is boolean mark (True if feature is numerical)
+
+    Args:
+        features: a list of name of features
+        dataset: a data set as a NUMPY array
+        logger: object for logging a scrip
+
+    Returns:
+        A dictionary where keys are names of feature, values are boolean marks
+        (True if feature is numerical)
     """
     if logger is not None:
         logger.debug("Getting of list of numerical feature")
@@ -77,13 +104,17 @@ def set_numerical_features(features: List[str], dataset: np.array, logger: Logge
     return numerical_features
 
 
-def describe_vertical(filename: str, args: argparse.Namespace, logger: Logger) -> None:
+def describe_vertical(args: argparse.Namespace, logger: Logger) -> None:
     """
     The function gets filename as a parameter, prints results for each feature in rows
     Options: logging of process
+
+    Args:
+        args: a list of the program parameters as argparse.Namespace object
+        logger: object for logging a script
     """
     logger.info("Printing mode is vertical: printing of metrics in rows")
-    dataset = load_csv(filename)
+    dataset = load_csv(args)
     if not args.index:
         dataset = np.delete(dataset, 0, axis=1)
         logger.debug("Column index is deleted")
@@ -113,13 +144,17 @@ def describe_vertical(filename: str, args: argparse.Namespace, logger: Logger) -
     logger.debug("Printing of table: values of numerical features: OK")
 
 
-def describe_horizontal(filename: str, args: argparse.Namespace, logger: Logger) -> None:
+def describe_horizontal(args: argparse.Namespace, logger: Logger) -> None:
     """
     The function gets filename as a parameter, prints results for each feature in columns
     Options: logging of process
+
+    Args:
+        args: a list of the program parameters as argparse.Namespace object
+        logger: object for logging a script
     """
     logger.info("Printing mode is horizontal: printing of metrics in columns")
-    dataset = load_csv(filename)
+    dataset = load_csv(args)
     if not args.index:
         dataset = np.delete(dataset, 0, axis=1)
         logger.debug("Column index is deleted")
@@ -148,15 +183,15 @@ def describe_horizontal(filename: str, args: argparse.Namespace, logger: Logger)
 
 def do_main_function() -> None:
     """
-    Main function of DESCRIBE command
+    Main function of DESCRIBE script
     """
     args = options_parse()
     logger = get_logger("DESCRIBE application", args)
     logger.info("DESCRIBE function is started ")
     if args.print_mode == 'v':
-        describe_vertical(args.filename, args, logger)
+        describe_vertical(args, logger)
     elif args.print_mode == 'h':
-        describe_horizontal(args.filename, args, logger)
+        describe_horizontal(args, logger)
     else:
         logger.error("Wrong print mode: you should use 'h' (horizontal) or "
                      "'v' (vertical) for printing")
@@ -167,49 +202,3 @@ def do_main_function() -> None:
 
 if __name__ == '__main__':
     do_main_function()
-
-
-def describe_horizontal_v1(filename: str, args: argparse.Namespace, logger: Logger) -> None:
-    """
-    v.1
-    The function gets filename as a parameter, prints results for each feature in columns
-    Options: logging of process
-    """
-    logger.info("Printing mode is horizontal: printing of metrics in columns")
-    dataset = load_csv(filename)
-    if not args.index:
-        dataset = np.delete(dataset, 0, axis=1)
-        logger.debug("Column index is deleted")
-    features = dataset[0]
-    dataset = dataset[1:]
-    logger.debug("Printing of table title: names of functions")
-    print(f'{"":15} |{"Count":>12} |{"Mean":>12} |{"Std":>12} |{"Min":>12} |{"25%":>12} |'
-          f'{"50%":>12} |{"75%":>12} |'f'{"Max":>12}')
-    logger.debug("OK")
-
-    numerical_features = set_numerical_features(features, dataset, logger)
-    logger.debug("Printing of table: values of numerical features")
-    for idx, feature in enumerate(features):
-        if not numerical_features[feature]:
-            continue
-        logger.debug("Printing of table: feature " + feature)
-        print(f'{feature:15.15}', end=' |')
-        try:
-            data = np.array(dataset[:, idx], dtype=float)
-            data = data[~np.isnan(data)]
-            if not data.any():
-                raise NoDataException("No numerical data in column " + feature)
-            print(f'{count_(data):>12.4f}', end=' |')
-            print(f'{mean_(data):>12.4f}', end=' |')
-            print(f'{std_(data):>12.4f}', end=' |')
-            print(f'{min_(data):>12.4f}', end=' |')
-            print(f'{percentile_(data, 25):>12.4f}', end=' |')
-            print(f'{percentile_(data, 50):>12.4f}', end=' |')
-            print(f'{percentile_(data, 75):>12.4f}', end=' |')
-            print(f'{max_(data):>12.4f}')
-        except (ValueError, TypeError, NoDataException):
-            print(f'{count_(dataset[:, idx]):>12.4f}', end=' |')
-            print(f'{"No numerical value to display":>60}')
-            logger.error("No numerical value to display")
-        logger.debug("Printing of table: feature " + feature + ": OK")
-    logger.debug("Printing of table: values of numerical features: OK")
